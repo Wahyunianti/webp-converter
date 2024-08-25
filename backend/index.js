@@ -4,14 +4,20 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const os = require('os'); // Use to get the temporary directory
+const tmp = require('tmp'); // For creating temporary files
 
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000; // Use environment variable for port
 
 app.use(cors());
 app.use(express.json());
 
-const upload = multer({ dest: 'uploads/' });
+// Create a temporary directory
+const tempDir = tmp.dirSync({ unsafeCleanup: true }).name;
+
+// Configure Multer to use the temporary directory
+const upload = multer({ dest: tempDir });
 
 app.post('/convert', upload.single('image'), async (req, res) => {
   if (!req.file) {
@@ -19,13 +25,26 @@ app.post('/convert', upload.single('image'), async (req, res) => {
   }
 
   const { path: filePath, originalname } = req.file;
-  const outputFilePath = path.join('uploads', `${path.parse(originalname).name}.webp`);
+  const outputFilePath = path.join(tempDir, `${path.parse(originalname).name}.webp`);
 
   try {
+    // Convert the image to WebP format
     await sharp(filePath).webp().toFile(outputFilePath);
-    fs.unlinkSync(filePath);
-    res.download(outputFilePath, () => fs.unlinkSync(outputFilePath));
+
+    // Send the converted file to the client
+    res.download(outputFilePath, (err) => {
+      // Clean up temporary files
+      fs.unlinkSync(filePath);
+      fs.unlinkSync(outputFilePath);
+
+      if (err) {
+        console.error('Error sending file:', err);
+        res.status(500).send('Error sending file.');
+      }
+    });
   } catch (error) {
+    // Clean up temporary files in case of an error
+    fs.unlinkSync(filePath);
     res.status(500).send('Error converting image.');
   }
 });
