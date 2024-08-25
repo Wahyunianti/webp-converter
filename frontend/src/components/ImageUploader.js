@@ -23,7 +23,7 @@ function ImageUploader() {
     formData.append('image', image);
 
     try {
-      const response = await axios.post('http://localhost:5000/convert', formData, {
+      const response = await axios.post('https://webp-converter-server.vercel.app/convert', formData, {
         responseType: 'blob',
       });
 
