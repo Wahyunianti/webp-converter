@@ -64,7 +64,7 @@ function ImageUploader() {
       
       </div>
 
-      <div className='w-full h-screen absolute inset-0 -z-20 bg-gradient-to-b from-yellow-100 to-pink-200 '>
+      <div className='w-full h-auto absolute inset-0 -z-20 bg-gradient-to-b from-yellow-100 to-pink-200 '>
       
       </div>
 
