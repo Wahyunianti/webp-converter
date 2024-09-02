@@ -39,7 +39,7 @@ function ImageUploader() {
   return (
 
     <div className="m-0 p-0 h-full box-border">
-      <div className="w-full h-auto relative ">
+      <div className="w-full h-screen relative ">
       <img className='inset-x-0 md:left-20 left-10 bottom-0 absolute -z-10 md:z-10 h-2/5 md:h-3/4 ' src='gambar.webp' alt='gambar'></img>
 
         <div className='flex flex-col w-full h-auto pt-10 px-5 md:px-24 gap-8 z-3000 items-end'>
